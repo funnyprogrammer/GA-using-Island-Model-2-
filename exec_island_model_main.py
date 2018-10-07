@@ -55,6 +55,10 @@ if __name__ == '__main__':
                 p.close()
         elif moment > mig_policy_time + mig_policy_freq:
             print("nao foi")
-        #reset broadcaster
+        #reset broadcasters
         broad = open('broadcast.txt', 'w')
         broad.close()
+        for i in range(num_threads):
+            broad = open('broadcast_{0}.txt'.format(i), 'w')
+            broad.close()
+
