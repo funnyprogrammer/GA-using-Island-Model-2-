@@ -13,16 +13,12 @@ mutationPropability = 0.001
 numberOfGenerations = 20
 
 def initializeIndividual(cromossome):
-    # Rastrigin's function
-    for value in range(len(cromossome)):
-        cromossome[value] = uniform(-5.12, 5.12)
-
     # Fantinato's function
-    #for value in range(len(cromossome)):
-    #    if random() < 0.5:
-    #        cromossome[value] = 0
-    #    else:
-    #        cromossome[value] = 1
+    for value in range(len(cromossome)):
+        if random() < 0.5:
+            cromossome[value] = 0
+        else:
+            cromossome[value] = 1
 
 def initializePopulationParallel(island):
     population = []
@@ -84,9 +80,13 @@ def evaluateIndividual(cromossome):
 
 
     # Rastrigin's function
-    fitness = 10 * len(cromossome)
-    for i in range(len(cromossome)):
-        fitness += cromossome[i] ** 2 - (10 * math.cos(2 * math.pi * cromossome[i]))
+    x = convertBoolean(cromossome, 0, int((len(cromossome))/2)-1)
+    print("test new")
+    print(x)
+    x = x * 0.00004768372718899898 - 80
+    print("test x")
+    print(x)
+    fitness = 10 + (x ** 2 - (10 * math.cos(2 * math.pi * x)))
     print("fitness")
     print(fitness)
     return fitness
@@ -132,15 +132,11 @@ def singlePointCrossover(cromossome1, cromossome2):
 def mutation(cromossome, probability):
     for i in range(len(cromossome)):
         if random() < probability:
-
-            # Rastrigin's function
-            cromossome[i] = uniform(-5.12, 5.12)
-
             # Fantinato's function
-            #if cromossome[i] == 0:
-            #    cromossome[i] = 1
-            #else:
-            #    cromossome[i] = 0
+            if cromossome[i] == 0:
+                cromossome[i] = 1
+            else:
+                cromossome[i] = 0
 
 def generation(population):
     i = 0
@@ -165,22 +161,11 @@ def showPopulation(i, population):
         print(individual, ':', x,';',y, ':', evaluateIndividual(population[individual]))
 
 def chooseBetter(population,island):
-    #obtain MIN value
     bestValue = -1
     for individual in range(len(population)):
-        if (evaluateIndividual(population[individual])) > bestValue:
+        if(evaluateIndividual(population[individual])) > bestValue:
             bestValue = evaluateIndividual(population[individual])
             best_ind = population[individual]
-    #set_broadcast(best_ind, island)
-    return bestValue
-
-def chooseWorst(population, betterValue, island):
-    worstValue = betterValue
-    worst_ind = population[0]
-    for individual in range(len(population)):
-        if(evaluateIndividual(population[individual])) < worstValue:
-            worstValue = evaluateIndividual(population[individual])
-            worst_ind = population[individual]
             while esco.check() == 1:
                 print("Wait")
             if esco.check() == 0:
@@ -190,13 +175,20 @@ def chooseWorst(population, betterValue, island):
                 for line in nonblank_lines(esc):
                     resul.append(literal_eval(line))
                 esc.close()
-                resul.append(worstValue)
+                resul.append(bestValue)
                 esc2 = open('escores.txt', 'w')
                 for ini in range(len(resul)):
                     esc2.write(str(resul[ini]) + '\n')
                 esc2.close()
                 esco.unlock()
-    set_broadcast(worst_ind, island)
+    set_broadcast(best_ind, island)
+    return bestValue
+
+def chooseWorst(population, betterValue):
+    worstValue = betterValue
+    for individual in range(len(population)):
+        if (evaluateIndividual(population[individual])) < worstValue:
+            worstValue = evaluateIndividual(population[individual])
     return(worstValue)
 
 def calculateAverage(population):
@@ -244,8 +236,8 @@ def initializeGA(island):
         print("start")
         population = generation(population)
         print("ok")
-        worstValue = chooseBetter(population, island)
-        betterValue = chooseWorst(population,worstValue,island)
+        betterValue = chooseBetter(population, island)
+        worstValue = chooseWorst(population, betterValue)
         averageValue = calculateAverage(population)
         print('GENERATION:', i, '     /     BETTER:', betterValue, '     /      AVERAGE:', averageValue, '     /      WORST:', worstValue)
     print("right on")
