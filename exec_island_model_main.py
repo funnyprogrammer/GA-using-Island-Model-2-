@@ -17,7 +17,7 @@ if __name__ == '__main__':
     m.map(hW.initializePopulationParallel, num_islands)
     m.close()
 
-    for case in range(5):
+    for case in range(20):
         print("distribution time")
         #function distribution between islands
         p = Pool(num_threads)
@@ -42,23 +42,23 @@ if __name__ == '__main__':
             broad.close()
 
         #migration time
-        print("migration time")
-        moment = time.time()
-        print("testei")
-        if moment > mig_policy_time + mig_policy_freq:  # FREQUENCY
-            print("foi")
-            mig_policy_time = time.time()
-            var_random = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
-            if var_random >= mig_policy_freq:
-                p = Pool(num_threads)
-                p.map(emi.do_migration, num_islands)
-                p.close()
-        elif moment > mig_policy_time + mig_policy_freq:
-            print("nao foi")
-        #reset broadcasters
-        broad = open('broadcast.txt', 'w')
-        broad.close()
-        for i in range(num_threads):
-            broad = open('broadcast_{0}.txt'.format(i), 'w')
+        if case < 19:
+            print("migration time")
+            moment = time.time()
+            if moment > mig_policy_time + mig_policy_freq:  # FREQUENCY
+                print("foi")
+                mig_policy_time = time.time()
+                var_random = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
+                if var_random >= mig_policy_freq:
+                    p = Pool(num_threads)
+                    p.map(emi.do_migration, num_islands)
+                    p.close()
+            elif moment > mig_policy_time + mig_policy_freq:
+                print("nao foi")
+            #reset broadcasters
+            broad = open('broadcast.txt', 'w')
             broad.close()
+            for i in range(num_threads):
+                broad = open('broadcast_{0}.txt'.format(i), 'w')
+                broad.close()
 

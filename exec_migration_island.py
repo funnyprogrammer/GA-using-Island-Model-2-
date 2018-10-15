@@ -12,46 +12,37 @@ def convertBoolean(cromossome, begin, end):
     return aux
 
 def evaluateIndividual(cromossome):
+    x = convertBoolean(cromossome, 0, int((len(cromossome)) / 2) - 1)
+    y = convertBoolean(cromossome, int((len(cromossome)) / 2), len(cromossome) - 1)
+    x = x * 0.00004768372718899898 - 100
+    y = y * 0.00004768372718899898 - 100
 
     # Ackley's function
     #firstSum = 0.0
     #secondSum = 0.0
-    #for c in cromossome:
+    #for c in chromosome:
     #    firstSum += c ** 2.0
     #    secondSum += math.cos(2.0 * math.pi * c)
-    #n = float(len(cromossome))
+    #n = float(len(chromosome))
     #return -20.0 * math.exp(-0.2 * math.sqrt(firstSum / n)) - math.exp(secondSum / n) + 20 + math.e
 
     # Griewank's function
-    #part1 = 0
-    #for i in range(len(cromossome)):
-    #    part1 += cromossome[i] ** 2
-    #    part2 = 1
-    #for i in range(len(cromossome)):
-    #    part2 *= math.cos(float(cromossome[i]) / math.sqrt(i + 1))
+    #part1 = (x ** 2) + (y ** 2)
+    #part2 = math.cos(float(x) / math.sqrt(2)) + math.cos(float(y) / math.sqrt(3))
     #return 1 + (float(part1) / 4000.0) - float(part2)
 
-
     # Schwefel's function
-    #alpha = 418.982887
-    #fitness = 0
-    #for i in range(len(cromossome)):
-    #    fitness -= cromossome[i] * math.sin(math.sqrt(math.fabs(cromossome[i])))
-    #return float(fitness) + alpha * len(cromossome)
-
+    #alpha = 418.982887 * 2
+    #fitness = x * math.sin(math.sqrt(math.fabs(x))) + y * math.sin(math.sqrt(math.fabs(y)))
+    #return alpha - fitness
 
     # Rastrigin's function
-    fitness = 10 * len(cromossome)
-    for i in range(len(cromossome)):
-        fitness += cromossome[i] ** 2 - (10 * math.cos(2 * math.pi * cromossome[i]))
-    return fitness
+    #fitness = 20 + (x ** 2 - (10 * math.cos(2 * math.pi * x))) + (y ** 2 - (10 * math.cos(2 * math.pi * y)))
+    #return fitness
 
     # Fantinato's function
-    #x = convertBoolean(cromossome, 0, int((len(cromossome))/2)-1)
-    #y = convertBoolean(cromossome, int((len(cromossome))/2), len(cromossome)-1)
-    #x = x * 0.00004768372718899898 - 100
-    #y = y * 0.00004768372718899898 - 100
-    #return (((abs(x*y*(math.sin((y*(math.pi))/4)))))+1)
+    return (((abs(x*y*(math.sin((y*(math.pi))/4)))))+1)
+
 
 def do_migration(island_number):
     mig_policy_isl = 0.2  # chance of every island
@@ -71,7 +62,6 @@ def do_migration(island_number):
         while var <= mig_policy_size:
             var_random2 = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
             if var_random2 >= mig_policy_ind:
-                print("ufa vou mudar")
                 random_ind = randint(0, len(island_content)-1)
                 random_best_gen = randint(0, len(best_gen_list)-1)
                 if evaluateIndividual(island_content[random_ind]) < evaluateIndividual(best_gen_list[random_best_gen]):

@@ -10,7 +10,7 @@ import escores as esco
 #population = [[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0]]
 
 mutationPropability = 0.001
-numberOfGenerations = 20
+numberOfGenerations = 50
 
 def initializeIndividual(cromossome):
     # Fantinato's function
@@ -51,6 +51,10 @@ def convertBoolean(cromossome, begin, end):
     return aux
 
 def evaluateIndividual(cromossome):
+    x = convertBoolean(cromossome, 0, int((len(cromossome)) / 2) - 1)
+    y = convertBoolean(cromossome, int((len(cromossome)) / 2), len(cromossome) - 1)
+    x = x * 0.00004768372718899898 - 100
+    y = y * 0.00004768372718899898 - 100
 
     # Ackley's function
     #firstSum = 0.0
@@ -62,41 +66,23 @@ def evaluateIndividual(cromossome):
     #return -20.0 * math.exp(-0.2 * math.sqrt(firstSum / n)) - math.exp(secondSum / n) + 20 + math.e
 
     # Griewank's function
-    #part1 = 0
-    #for i in range(len(chromosome)):
-    #    part1 += chromosome[i] ** 2
-    #    part2 = 1
-    #for i in range(len(chromosome)):
-    #    part2 *= math.cos(float(chromosome[i]) / math.sqrt(i + 1))
+    #part1 = (x ** 2) + (y ** 2)
+    #part2 = math.cos(float(x) / math.sqrt(2)) + math.cos(float(y) / math.sqrt(3))
     #return 1 + (float(part1) / 4000.0) - float(part2)
 
 
     # Schwefel's function
-    #alpha = 418.982887
-    #fitness = 0
-    #for i in range(len(chromosome)):
-    #    fitness -= chromosome[i] * math.sin(math.sqrt(math.fabs(chromosome[i])))
-    #return float(fitness) + alpha * len(chromosome)
+    #alpha = 418.982887*2
+    #fitness = x * math.sin(math.sqrt(math.fabs(x))) + y * math.sin(math.sqrt(math.fabs(y)))
+    #return alpha - fitness
 
 
     # Rastrigin's function
-    x = convertBoolean(cromossome, 0, int((len(cromossome))/2)-1)
-    print("test new")
-    print(x)
-    x = x * 0.00004768372718899898 - 80
-    print("test x")
-    print(x)
-    fitness = 10 + (x ** 2 - (10 * math.cos(2 * math.pi * x)))
-    print("fitness")
-    print(fitness)
-    return fitness
+    #fitness = 20 + (x ** 2 - (10 * math.cos(2 * math.pi * x))) + (y ** 2 - (10 * math.cos(2 * math.pi * y)))
+    #return fitness
 
     # Fantinato's function
-    #x = convertBoolean(cromossome, 0, int((len(cromossome))/2)-1)
-    #y = convertBoolean(cromossome, int((len(cromossome))/2), len(cromossome)-1)
-    #x = x * 0.00004768372718899898 - 100
-    #y = y * 0.00004768372718899898 - 100
-    #return (((abs(x*y*(math.sin((y*(math.pi))/4)))))+1)
+    return (((abs(x*y*(math.sin((y*(math.pi))/4)))))+1)
 
 def evaluatePopulation(population):
     sum = 0
@@ -106,8 +92,6 @@ def evaluatePopulation(population):
 
 def rouletteSelection(population):
     populationEvaluationSum = evaluatePopulation(population)
-    print("that")
-    print(populationEvaluationSum)
     limit = random() * populationEvaluationSum
     i = 0
     aux = evaluateIndividual(population[i])
@@ -143,8 +127,6 @@ def generation(population):
     auxPopulation = copy.deepcopy(population)
     while i < len(population)-1:
         auxPopulation[i] = copy.deepcopy(population[rouletteSelection(population)])
-        print("this")
-        print(auxPopulation[i])
         auxPopulation[i+1] = copy.deepcopy(population[rouletteSelection(population)])
         singlePointCrossover(auxPopulation[i], auxPopulation[i+1])
         mutation(auxPopulation[i], mutationPropability)
@@ -222,7 +204,6 @@ def set_broadcast(individual,island):
     broad2.close()
 
 def initializeGA(island):
-    print("entrei aqui")
     population = []
     while isl.check(island) == 1:
         isl.wait()
@@ -233,14 +214,11 @@ def initializeGA(island):
                 population.append(literal_eval(line))
         f.close()
     for i in range(numberOfGenerations):
-        print("start")
         population = generation(population)
-        print("ok")
         betterValue = chooseBetter(population, island)
         worstValue = chooseWorst(population, betterValue)
         averageValue = calculateAverage(population)
         print('GENERATION:', i, '     /     BETTER:', betterValue, '     /      AVERAGE:', averageValue, '     /      WORST:', worstValue)
-    print("right on")
     rewriteFile(island, population)
     isl.unlock(island)
 
