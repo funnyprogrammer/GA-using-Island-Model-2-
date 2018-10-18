@@ -1,16 +1,16 @@
 from random import random
-from random import uniform
 import math
 import copy
 from ast import literal_eval
 import island as isl
 import escores as esco
+import matplotlib.pyplot as plt
 
 #population = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 #population = [[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0]]
 
 mutationPropability = 0.001
-numberOfGenerations = 50
+numberOfGenerations = 3
 
 def initializeIndividual(cromossome):
     # Fantinato's function
@@ -221,6 +221,28 @@ def initializeGA(island):
         print('GENERATION:', i, '     /     BETTER:', betterValue, '     /      AVERAGE:', averageValue, '     /      WORST:', worstValue)
     rewriteFile(island, population)
     isl.unlock(island)
+
+    #plot
+    with open('plot1.csv','w', newline='')as f:
+        for i in range(len(population)):
+            value = evaluateIndividual(population[i])
+            f.write(str(value) + "\n")
+        f.close()
+
+    x = []
+    y = []
+    dataset = open('plot1.csv', 'r')
+    for line in dataset:
+        line = line.strip()
+        X,Y = line.split(',')
+        x.append(X)
+        y.append(Y)
+    dataset.close()
+    plt.plot(x, y)
+    plt.title('Grafico')
+    plt.xlabel('x label')
+    plt.ylabel('y label')
+    plt.show()
 
 
 

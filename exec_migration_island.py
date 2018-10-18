@@ -45,9 +45,9 @@ def evaluateIndividual(cromossome):
 
 
 def do_migration(island_number):
-    mig_policy_isl = 0.2  # chance of every island
+    mig_policy_isl = 0.33  # chance of every island
     mig_policy_ind = 0.33  # switch individual
-    mig_policy_size = 30
+    mig_policy_size = 12
     var_random = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
     if var_random >= mig_policy_isl:
         island = open('island_{0}.txt'.format(island_number), 'r')
