@@ -7,12 +7,11 @@ def check(island):
         for line in f:
             population.append(literal_eval(line))
     f.close()
-    ant = population[0]
     stable = False
     for ind in range(len(population)):
         value = hW.evaluateIndividual(population[ind])
-        if value >= 9600:
+        if value >= 9400:
             stable = False
-        if value < 9600:
+        if value < 9400:
             return True
     return stable

@@ -6,26 +6,35 @@ from multiprocessing import Pool
 import time
 import os
 from ast import literal_eval
+import Plotter2D as plt
+
+#from mpl_toolkits.mplot3d import Axes3D
+#fig = plt.figure()
+#ax = Axes3D(fig)
+num_threads = 5
 
 if __name__ == '__main__':
     mig_policy_time = time.time()  # current time
     mig_policy_freq = 0.3  # frequency
     num_islands = [0, 1, 2, 3, 4]
-    num_threads = 5
     keep_rolling = True
+    x_var = 0
+    eci.create_island(num_islands, num_threads)
 
-    eci.create_island(num_islands, num_threads)  # create islands
+    # create islands
     m = Pool(num_threads)
     m.map(hW.initializePopulationParallel, num_islands)
     m.close()
 
     while keep_rolling:
+        x_var += 1
         print("distribution time")
         #function distribution between islands
         p = Pool(num_threads)
         p.map(hW.initializeGA, num_islands)
         p.close()
-        #reuniao dos broadcasters
+
+        # reuniao dos broadcasters
         for each in range(num_threads):
             allBests = []
             with open('broadcast_{0}.txt'.format(each), 'r') as broad1:
@@ -56,7 +65,8 @@ if __name__ == '__main__':
                 p.close()
         elif moment > mig_policy_time + mig_policy_freq:
             print("nao foi")
-        #reset broadcasters
+
+        # reset broadcasters
         broad = open('broadcast.txt', 'w')
         broad.close()
         for i in range(num_threads):
@@ -67,5 +77,9 @@ if __name__ == '__main__':
         print("check time")
         for i in range(num_threads):
             keep_rolling = eic.check(i)
+
+    end = time.time()
     print("terminou")
+    plt.plotter2dALL(num_threads,x_var)
+
 

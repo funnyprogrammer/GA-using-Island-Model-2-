@@ -45,9 +45,10 @@ def evaluateIndividual(cromossome):
 
 
 def do_migration(island_number):
-    mig_policy_isl = 0.33  # chance of every island
-    mig_policy_ind = 0.33  # switch individual
-    mig_policy_size = 12
+    mig_policy_isl = 0.40  # chance of every island
+    mig_policy_ind = 0.40 # switch individual
+    mig_policy_size = 4
+
     var_random = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
     if var_random >= mig_policy_isl:
         island = open('island_{0}.txt'.format(island_number), 'r')
@@ -62,10 +63,19 @@ def do_migration(island_number):
         while var <= mig_policy_size:
             var_random2 = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
             if var_random2 >= mig_policy_ind:
-                random_ind = randint(0, len(island_content)-1)
-                random_best_gen = randint(0, len(best_gen_list)-1)
+                random_ind = randint(0, len(island_content) - 1)
+                random_best_gen = randint(0, len(best_gen_list) - 1)
                 if evaluateIndividual(island_content[random_ind]) < evaluateIndividual(best_gen_list[random_best_gen]):
-                    island_content[random_ind] = best_gen_list[random_best_gen] #assumindo que eu posso pegar o msm caso para todas as ilhas
+                    island_content[random_ind] = best_gen_list[random_best_gen]  # assumindo que eu posso pegar o msm caso para todas as ilhas
+                    ver = open('verify_{0}.txt'.format(island_number), 'r')
+                    ver_content = []
+                    for line in ver:
+                        ver_content.append(literal_eval(line))
+                    ver_content.append(1)
+                    ver.close()
+                    with open('verify_{0}.txt'.format(island_number), 'w') as new_verify:
+                        for ini in range(len(ver_content)):
+                            new_verify.write(str(ver_content[ini]) + '\n')
             var = var + 1
         island.close()
         with open('island_{0}.txt'.format(island_number), 'w') as new_island:
@@ -73,3 +83,4 @@ def do_migration(island_number):
                 new_island.write(str(island_content[ini]) + '\n')
         new_island.close()
         broad.close()
+

@@ -4,12 +4,14 @@ import copy
 from ast import literal_eval
 import island as isl
 import escores as esco
-import matplotlib.pyplot as plt
+import time
+#import exec_island_model_main as eimm
+
 
 #population = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 #population = [[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0]]
 
-mutationPropability = 0.001
+mutationPropability = 0.0005
 numberOfGenerations = 3
 
 def initializeIndividual(cromossome):
@@ -201,9 +203,29 @@ def set_broadcast(individual,island):
     with open('broadcast_{0}.txt'.format(island), 'w') as broad2:
         for ini in range(len(allBests)):
             broad2.write(str(allBests[ini]) + '\n')
-    broad2.close()
+
+def savePlotY(averageValue,island):
+    value = []
+    with open('plot_{0}.csv'.format(island), 'r') as pl:
+        for line in nonblank_lines(pl):
+            value.append(literal_eval(line))
+    value.append(averageValue)
+    with open('plot_{0}.csv'.format(island), 'w')as f:
+        for a in range(len(value)):
+            f.write(str(value[a]) + "\n")
+
+def savePlotY2(max,island):
+    value2 = []
+    with open('plot2_{0}.csv'.format(island), 'r') as pl:
+        for line in nonblank_lines(pl):
+            value2.append(literal_eval(line))
+    value2.append(max)
+    with open('plot2_{0}.csv'.format(island), 'w')as f:
+        for a in range(len(value2)):
+            f.write(str(value2[a]) + "\n")
 
 def initializeGA(island):
+    start = time.time()
     population = []
     while isl.check(island) == 1:
         isl.wait()
@@ -212,37 +234,33 @@ def initializeGA(island):
         with open('island_{0}.txt'.format(island), 'r') as f:
             for line in f:
                 population.append(literal_eval(line))
-        f.close()
     for i in range(numberOfGenerations):
         population = generation(population)
         betterValue = chooseBetter(population, island)
         worstValue = chooseWorst(population, betterValue)
         averageValue = calculateAverage(population)
         print('GENERATION:', i, '     /     BETTER:', betterValue, '     /      AVERAGE:', averageValue, '     /      WORST:', worstValue)
+        savePlotY(averageValue,island)
+        savePlotY2(betterValue,island)
     rewriteFile(island, population)
     isl.unlock(island)
+    end = time.time()
+    timers = []
+    with open('timer_{0}.txt'.format(island), 'r') as pl:
+        for line in nonblank_lines(pl):
+            timers.append(literal_eval(line))
+    tempoDuas = format(end-start, '.2f')
+    timers.append(tempoDuas)
+    with open('timer_{0}.txt'.format(island), 'w')as f:
+        for a in range(len(timers)):
+            f.write(str(timers[a]) + "\n")
 
-    #plot
-    with open('plot1.csv','w', newline='')as f:
-        for i in range(len(population)):
-            value = evaluateIndividual(population[i])
-            f.write(str(value) + "\n")
-        f.close()
 
-    x = []
-    y = []
-    dataset = open('plot1.csv', 'r')
-    for line in dataset:
-        line = line.strip()
-        X,Y = line.split(',')
-        x.append(X)
-        y.append(Y)
-    dataset.close()
-    plt.plot(x, y)
-    plt.title('Grafico')
-    plt.xlabel('x label')
-    plt.ylabel('y label')
-    plt.show()
+
+
+
+
+
 
 
 
