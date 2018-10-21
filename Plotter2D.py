@@ -8,10 +8,9 @@ def nonblank_lines(f):
             yield line
 
 
-def plotter2dALL(num_threads,x_var):
+def plotter2dALL(num_threads,x_var,timing):
     #for isl in range(num_threads):
         #with open('verify_{0}'.format(isl), 'r')
-    time = 0
     for i in range(num_threads):
         x = []
         y = []
@@ -22,20 +21,11 @@ def plotter2dALL(num_threads,x_var):
         for asi in range(x_var * 3):
             x.append(asi)
 
-        timers = []
-        tempo_time = 0
-        with open('timer_{0}.txt'.format(i), 'r') as pl:
-            for line in nonblank_lines(pl):
-                timers.append(literal_eval(line))
-        for b in range(len(timers)):
-            tempo_time += timers[b]
-        if tempo_time > time:
-            time = tempo_time
         plt.plot(x, y)
 
-    plt.axis([0, x_var * 3, 0, 10000])
+    plt.axis([0, x_var * 3, 0, 1000])
     plt.title('Average fitness in every islands',loc='left')
-    plt.title('Time = ' + str(time),loc='right')
+    plt.title('Time = ' + str(timing),loc='right')
     plt.show()
     for i in range(num_threads):
         x = []
@@ -46,7 +36,7 @@ def plotter2dALL(num_threads,x_var):
         for i in range(x_var * 3):
             x.append(i)
         plt.plot(x, y2)
-        plt.axis([0, x_var * 3, 0, 10000])
+        plt.axis([0, x_var * 3, 0, 1000])
         plt.title('Maximum fitness in every islands')
     plt.show()
 

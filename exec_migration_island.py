@@ -32,16 +32,16 @@ def evaluateIndividual(cromossome):
     #return 1 + (float(part1) / 4000.0) - float(part2)
 
     # Schwefel's function
-    #alpha = 418.982887 * 2
-    #fitness = x * math.sin(math.sqrt(math.fabs(x))) + y * math.sin(math.sqrt(math.fabs(y)))
-    #return alpha - fitness
+    alpha = 418.982887 * 2
+    fitness = x * math.sin(math.sqrt(math.fabs(x))) + y * math.sin(math.sqrt(math.fabs(y)))
+    return alpha - fitness
 
     # Rastrigin's function
     #fitness = 20 + (x ** 2 - (10 * math.cos(2 * math.pi * x))) + (y ** 2 - (10 * math.cos(2 * math.pi * y)))
     #return fitness
 
     # Fantinato's function
-    return (((abs(x*y*(math.sin((y*(math.pi))/4)))))+1)
+    #return (((abs(x*y*(math.sin((y*(math.pi))/4)))))+1)
 
 
 def do_migration(island_number):

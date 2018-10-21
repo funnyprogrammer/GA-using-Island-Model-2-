@@ -10,8 +10,8 @@ def check(island):
     stable = False
     for ind in range(len(population)):
         value = hW.evaluateIndividual(population[ind])
-        if value >= 9400:
+        if value >= 960:
             stable = False
-        if value < 9400:
+        if value < 960:
             return True
     return stable

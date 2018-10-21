@@ -142,10 +142,6 @@ def creator(var):
     ver = open('verify_{0}.txt'.format(var), 'w')
     ver.close()
 
-    # cria timer
-    time = open('timer_{0}.txt'.format(var), 'w')
-    time    .close()
-
     #cria plot
     plot = open('plot_{0}.csv'.format(var), 'w')
     plot.close()

@@ -74,9 +74,9 @@ def evaluateIndividual(cromossome):
 
 
     # Schwefel's function
-    #alpha = 418.982887*2
-    #fitness = x * math.sin(math.sqrt(math.fabs(x))) + y * math.sin(math.sqrt(math.fabs(y)))
-    #return alpha - fitness
+    alpha = 418.982887*2
+    fitness = x * math.sin(math.sqrt(math.fabs(x))) + y * math.sin(math.sqrt(math.fabs(y)))
+    return alpha - fitness
 
 
     # Rastrigin's function
@@ -84,7 +84,7 @@ def evaluateIndividual(cromossome):
     #return fitness
 
     # Fantinato's function
-    return (((abs(x*y*(math.sin((y*(math.pi))/4)))))+1)
+    #return (((abs(x*y*(math.sin((y*(math.pi))/4)))))+1)
 
 def evaluatePopulation(population):
     sum = 0
@@ -225,7 +225,6 @@ def savePlotY2(max,island):
             f.write(str(value2[a]) + "\n")
 
 def initializeGA(island):
-    start = time.time()
     population = []
     while isl.check(island) == 1:
         isl.wait()
@@ -244,16 +243,6 @@ def initializeGA(island):
         savePlotY2(betterValue,island)
     rewriteFile(island, population)
     isl.unlock(island)
-    end = time.time()
-    timers = []
-    with open('timer_{0}.txt'.format(island), 'r') as pl:
-        for line in nonblank_lines(pl):
-            timers.append(literal_eval(line))
-    tempoDuas = format(end-start, '.2f')
-    timers.append(tempoDuas)
-    with open('timer_{0}.txt'.format(island), 'w')as f:
-        for a in range(len(timers)):
-            f.write(str(timers[a]) + "\n")
 
 
 

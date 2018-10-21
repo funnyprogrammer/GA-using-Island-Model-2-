@@ -14,6 +14,7 @@ import Plotter2D as plt
 num_threads = 5
 
 if __name__ == '__main__':
+    start = time.time()
     mig_policy_time = time.time()  # current time
     mig_policy_freq = 0.3  # frequency
     num_islands = [0, 1, 2, 3, 4]
@@ -79,7 +80,8 @@ if __name__ == '__main__':
             keep_rolling = eic.check(i)
 
     end = time.time()
+    timing = format(end-start, '.2f')
     print("terminou")
-    plt.plotter2dALL(num_threads,x_var)
+    plt.plotter2dALL(num_threads,x_var,timing)
 
 
